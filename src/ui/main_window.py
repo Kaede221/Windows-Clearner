@@ -31,6 +31,7 @@ from ..scanner import JunkScanner
 from ..cleaner import JunkCleaner
 from ..file_system import FileSystemAccess
 from ..config_manager import ConfigManager
+from .settings_page import SettingsPage
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,11 @@ class MainWindow(FluentWindow):
         central_widget = QWidget()
         central_widget.setObjectName("homeInterface")
         self.addSubInterface(central_widget, FluentIcon.HOME, "主页")
+        
+        # 创建设置页面
+        settings_widget = SettingsPage()
+        settings_widget.setObjectName("settingsInterface")
+        self.addSubInterface(settings_widget, FluentIcon.SETTING, "设置")
         
         # 主布局
         main_layout = QVBoxLayout(central_widget)
