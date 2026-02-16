@@ -42,3 +42,4 @@ config/*.yml
 EXAMPLE
 build
 dist
+config
