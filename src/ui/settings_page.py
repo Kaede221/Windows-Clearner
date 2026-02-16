@@ -24,6 +24,8 @@ from qfluentwidgets import (
     InfoBar,
     isDarkTheme
 )
+from src.ui.folder_list_card import FolderListSettingCard
+from src.config_manager import config_manager
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +74,22 @@ class SettingsPage(ScrollArea):
             configItem=None,  # 暂时不绑定配置项
             parent=self.appGroup
         )
+        
+        # 扫描设置组
+        self.scanGroup = SettingCardGroup("扫描设置", self.scrollWidget)
+        
+        # 自定义文件夹卡片
+        self.customFoldersCard = FolderListSettingCard(
+            "自定义扫描文件夹",
+            "添加您想要扫描的自定义文件夹，不存在的文件夹将被跳过",
+            directory="C:/",
+            parent=self.scanGroup
+        )
+        
+        # 从配置加载自定义文件夹
+        custom_folders = config_manager.get_custom_folders()
+        if custom_folders:
+            self.customFoldersCard.set_folders(custom_folders)
         
         # 关于设置组
         self.aboutGroup = SettingCardGroup("关于", self.scrollWidget)
@@ -150,6 +168,9 @@ class SettingsPage(ScrollArea):
         # 添加卡片到应用组
         self.appGroup.addSettingCard(self.autoUpdateCard)
         
+        # 添加卡片到扫描设置组
+        self.scanGroup.addSettingCard(self.customFoldersCard)
+        
         # 添加卡片到关于组
         self.aboutGroup.addSettingCard(self.aboutCard)
         
@@ -158,6 +179,7 @@ class SettingsPage(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.personalGroup)
         self.expandLayout.addWidget(self.appGroup)
+        self.expandLayout.addWidget(self.scanGroup)
         self.expandLayout.addWidget(self.aboutGroup)
     
     def _connect_signals(self) -> None:
@@ -168,6 +190,9 @@ class SettingsPage(ScrollArea):
         # 主题色变化 - 使用 lambda 来调用 setThemeColor
         self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c))
         
+        # 自定义文件夹变化
+        self.customFoldersCard.folderChanged.connect(self._on_custom_folders_changed)
+        
         # 关于按钮点击
         self.aboutCard.clicked.connect(self._on_about_clicked)
     
@@ -177,6 +202,21 @@ class SettingsPage(ScrollArea):
         # 重新应用样式表
         self._apply_style_sheet()
         logger.info(f"主题已更改为: {theme}")
+    
+    def _on_custom_folders_changed(self, folders: list) -> None:
+        """处理自定义文件夹变化"""
+        config_manager.set_custom_folders(folders)
+        logger.info(f"自定义文件夹已更新: {folders}")
+        
+        # 显示提示信息
+        InfoBar.success(
+            title="设置已保存",
+            content=f"已保存 {len(folders)} 个自定义文件夹",
+            orient=Qt.Orientation.Horizontal,
+            isClosable=True,
+            duration=2000,
+            parent=self
+        )
     
     def _on_about_clicked(self) -> None:
         """处理关于按钮点击"""

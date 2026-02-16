@@ -14,8 +14,10 @@ from src.category_scanners import (
     WindowsUpdateScanner,
     RecycleBinScanner,
     BrowserCacheScanner,
-    ThumbnailCacheScanner
+    ThumbnailCacheScanner,
+    CustomFoldersScanner
 )
+from src.config_manager import config_manager
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +45,22 @@ class JunkScanner:
         Returns:
             类别扫描器映射字典
         """
-        return {
+        # 获取用户自定义的文件夹列表
+        custom_folders = config_manager.get_custom_folders()
+        
+        scanners = {
             JunkCategory.TEMP_FILES: TempFilesScanner(),
             JunkCategory.WINDOWS_UPDATE_CACHE: WindowsUpdateScanner(),
             JunkCategory.RECYCLE_BIN: RecycleBinScanner(),
             JunkCategory.BROWSER_CACHE: BrowserCacheScanner(),
             JunkCategory.THUMBNAIL_CACHE: ThumbnailCacheScanner(),
         }
+        
+        # 如果有自定义文件夹，添加自定义扫描器
+        if custom_folders:
+            scanners[JunkCategory.CUSTOM] = CustomFoldersScanner(custom_folders)
+        
+        return scanners
     
     def scan(self, progress_callback: Callable[[str, int], None]) -> ScanResult:
         """

@@ -336,3 +336,45 @@ class ThumbnailCacheScanner(CategoryScanner):
         
         logger.info(f"缩略图缓存扫描完成，发现 {len(files)} 个文件")
         return files
+
+
+class CustomFoldersScanner(CategoryScanner):
+    """自定义文件夹扫描器"""
+    
+    def __init__(self, custom_folders: List[str]):
+        """
+        初始化自定义文件夹扫描器
+        
+        Args:
+            custom_folders: 用户指定的自定义文件夹列表
+        """
+        self.custom_folders = custom_folders
+    
+    def scan(self) -> List[JunkFile]:
+        """
+        扫描用户指定的自定义文件夹
+        
+        Returns:
+            自定义文件夹中的文件列表
+        """
+        logger.info("开始扫描自定义文件夹")
+        files = []
+        
+        for folder in self.custom_folders:
+            # 检查文件夹是否存在
+            if not os.path.exists(folder):
+                logger.warning(f"自定义文件夹不存在，跳过: {folder}")
+                continue
+            
+            # 检查是否为目录
+            if not os.path.isdir(folder):
+                logger.warning(f"路径不是文件夹，跳过: {folder}")
+                continue
+            
+            logger.debug(f"扫描自定义文件夹: {folder}")
+            dir_files = self._scan_directory(folder, JunkCategory.CUSTOM)
+            files.extend(dir_files)
+        
+        logger.info(f"自定义文件夹扫描完成，发现 {len(files)} 个文件")
+        return files
+

@@ -33,7 +33,7 @@ from ..controllers import ScanController, CleanController
 from ..scanner import JunkScanner
 from ..cleaner import JunkCleaner
 from ..file_system import FileSystemAccess
-from ..config_manager import ConfigManager
+from ..config_manager import config_manager
 from .settings_page import SettingsPage
 
 logger = logging.getLogger(__name__)
@@ -45,12 +45,22 @@ class MainWindow(FluentWindow):
     def __init__(self):
         super().__init__()
         
-        # 加载配置
-        self.config_manager = ConfigManager()
-        self.config = self.config_manager.load_config()
+        # 创建默认扫描配置
+        scan_config = ScanConfig(
+            enabled_categories={
+                JunkCategory.TEMP_FILES,
+                JunkCategory.WINDOWS_UPDATE_CACHE,
+                JunkCategory.RECYCLE_BIN,
+                JunkCategory.BROWSER_CACHE,
+                JunkCategory.THUMBNAIL_CACHE,
+                JunkCategory.CUSTOM  # 添加自定义类别
+            },
+            excluded_paths=[],
+            custom_patterns=[]
+        )
         
         # 初始化控制器
-        scanner = JunkScanner(self.config.scan_config)
+        scanner = JunkScanner(scan_config)
         cleaner = JunkCleaner()
         self.scan_controller = ScanController(scanner)
         self.clean_controller = CleanController(cleaner)

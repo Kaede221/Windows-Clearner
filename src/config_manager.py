@@ -1,160 +1,115 @@
 """
-配置管理器模块
+配置管理模块
 
-负责加载和保存应用程序配置。
+管理应用程序的自定义配置，包括用户选择的自定义扫描文件夹。
 """
 
 import json
 import logging
 import os
-from typing import Any, Dict
-
-from .models import AppConfig, ScanConfig, JunkCategory
+from typing import List
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
 class ConfigManager:
-    """配置管理器，负责加载和保存应用程序配置"""
+    """配置管理器，负责保存和加载应用配置"""
     
-    CONFIG_FILE = "config.json"
+    CONFIG_FILE = "config/app_config.json"
     
-    def load_config(self) -> AppConfig:
+    def __init__(self):
+        """初始化配置管理器"""
+        self._config = self._load_config()
+    
+    def _load_config(self) -> dict:
         """
         从文件加载配置
         
-        如果配置文件不存在或损坏，返回默认配置
-        
         Returns:
-            AppConfig: 应用程序配置
+            配置字典
         """
-        try:
-            if not os.path.exists(self.CONFIG_FILE):
-                logger.info("配置文件不存在，使用默认配置")
-                return self.get_default_config()
-            
-            with open(self.CONFIG_FILE, 'r', encoding='utf-8') as f:
-                config_dict = json.load(f)
-            
-            # 解析配置字典
-            config = self._dict_to_config(config_dict)
-            logger.info("成功加载配置文件")
-            return config
-            
-        except json.JSONDecodeError as e:
-            logger.error(f"配置文件格式错误: {e}，使用默认配置")
-            return self.get_default_config()
-            
-        except Exception as e:
-            logger.error(f"加载配置文件时出错: {e}，使用默认配置", exc_info=True)
-            return self.get_default_config()
+        if os.path.exists(self.CONFIG_FILE):
+            try:
+                with open(self.CONFIG_FILE, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                    logger.info(f"配置已从 {self.CONFIG_FILE} 加载")
+                    return config
+            except Exception as e:
+                logger.error(f"加载配置文件失败: {e}", exc_info=True)
+                return self._get_default_config()
+        else:
+            logger.info("配置文件不存在，使用默认配置")
+            return self._get_default_config()
     
-    def save_config(self, config: AppConfig) -> None:
-        """
-        保存配置到文件
-        
-        Args:
-            config: 要保存的应用程序配置
-        """
-        try:
-            # 将配置转换为字典
-            config_dict = self._config_to_dict(config)
-            
-            # 保存到文件
-            with open(self.CONFIG_FILE, 'w', encoding='utf-8') as f:
-                json.dump(config_dict, f, indent=2, ensure_ascii=False)
-            
-            logger.info("成功保存配置文件")
-            
-        except Exception as e:
-            logger.error(f"保存配置文件时出错: {e}", exc_info=True)
-            raise
-    
-    def get_default_config(self) -> AppConfig:
+    def _get_default_config(self) -> dict:
         """
         获取默认配置
         
         Returns:
-            AppConfig: 默认应用程序配置
-        """
-        # 默认启用所有垃圾类别（除了自定义路径）
-        enabled_categories = {
-            JunkCategory.TEMP_FILES,
-            JunkCategory.WINDOWS_UPDATE_CACHE,
-            JunkCategory.RECYCLE_BIN,
-            JunkCategory.BROWSER_CACHE,
-            JunkCategory.THUMBNAIL_CACHE
-        }
-        
-        scan_config = ScanConfig(
-            enabled_categories=enabled_categories,
-            excluded_paths=[],
-            custom_patterns=[],
-            max_file_age_days=None
-        )
-        
-        return AppConfig(
-            scan_config=scan_config,
-            language="zh_CN",
-            auto_check_updates=True
-        )
-    
-    def _config_to_dict(self, config: AppConfig) -> Dict[str, Any]:
-        """
-        将 AppConfig 对象转换为字典
-        
-        Args:
-            config: 应用程序配置
-        
-        Returns:
-            Dict: 配置字典
+            默认配置字典
         """
         return {
-            "scan_config": {
-                "enabled_categories": [cat.name for cat in config.scan_config.enabled_categories],
-                "excluded_paths": config.scan_config.excluded_paths,
-                "custom_patterns": config.scan_config.custom_patterns,
-                "max_file_age_days": config.scan_config.max_file_age_days
-            },
-            "language": config.language,
-            "auto_check_updates": config.auto_check_updates
+            "custom_folders": [],
+            "auto_check_updates": True
         }
     
-    def _dict_to_config(self, config_dict: Dict[str, Any]) -> AppConfig:
+    def _save_config(self) -> None:
+        """保存配置到文件"""
+        try:
+            # 确保配置目录存在
+            config_dir = os.path.dirname(self.CONFIG_FILE)
+            if not os.path.exists(config_dir):
+                os.makedirs(config_dir)
+            
+            # 保存配置
+            with open(self.CONFIG_FILE, 'w', encoding='utf-8') as f:
+                json.dump(self._config, f, ensure_ascii=False, indent=4)
+            
+            logger.info(f"配置已保存到 {self.CONFIG_FILE}")
+        except Exception as e:
+            logger.error(f"保存配置文件失败: {e}", exc_info=True)
+    
+    def get_custom_folders(self) -> List[str]:
         """
-        将字典转换为 AppConfig 对象
-        
-        Args:
-            config_dict: 配置字典
+        获取用户自定义的扫描文件夹列表
         
         Returns:
-            AppConfig: 应用程序配置
+            文件夹路径列表
         """
-        # 解析扫描配置
-        scan_config_dict = config_dict.get("scan_config", {})
+        return self._config.get("custom_folders", [])
+    
+    def set_custom_folders(self, folders: List[str]) -> None:
+        """
+        设置用户自定义的扫描文件夹列表
         
-        # 将类别名称转换为枚举
-        enabled_categories = set()
-        for cat_name in scan_config_dict.get("enabled_categories", []):
-            try:
-                enabled_categories.add(JunkCategory[cat_name])
-            except KeyError:
-                logger.warning(f"未知的垃圾类别: {cat_name}")
+        Args:
+            folders: 文件夹路径列表
+        """
+        self._config["custom_folders"] = folders
+        self._save_config()
+        logger.info(f"自定义文件夹已更新: {folders}")
+    
+    def get_auto_check_updates(self) -> bool:
+        """
+        获取是否自动检查更新
         
-        # 如果没有启用的类别，使用默认配置
-        if not enabled_categories:
-            logger.warning("配置中没有启用的类别，使用默认配置")
-            return self.get_default_config()
+        Returns:
+            是否自动检查更新
+        """
+        return self._config.get("auto_check_updates", True)
+    
+    def set_auto_check_updates(self, enabled: bool) -> None:
+        """
+        设置是否自动检查更新
         
-        scan_config = ScanConfig(
-            enabled_categories=enabled_categories,
-            excluded_paths=scan_config_dict.get("excluded_paths", []),
-            custom_patterns=scan_config_dict.get("custom_patterns", []),
-            max_file_age_days=scan_config_dict.get("max_file_age_days")
-        )
-        
-        return AppConfig(
-            scan_config=scan_config,
-            language=config_dict.get("language", "zh_CN"),
-            auto_check_updates=config_dict.get("auto_check_updates", True)
-        )
+        Args:
+            enabled: 是否启用
+        """
+        self._config["auto_check_updates"] = enabled
+        self._save_config()
+        logger.info(f"自动检查更新已设置为: {enabled}")
+
+
+# 全局配置管理器实例
+config_manager = ConfigManager()
