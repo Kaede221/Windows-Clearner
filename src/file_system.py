@@ -37,7 +37,9 @@ class FileSystemAccess:
     # 浏览器缓存路径
     BROWSER_CACHE_PATHS = [
         os.path.expandvars(r"%LocalAppData%\Google\Chrome\User Data\Default\Cache"),
+        os.path.expandvars(r"%LocalAppData%\Google\Chrome\User Data\Default\Code Cache"),
         os.path.expandvars(r"%LocalAppData%\Microsoft\Edge\User Data\Default\Cache"),
+        os.path.expandvars(r"%LocalAppData%\Microsoft\Edge\User Data\Default\Code Cache"),
         os.path.expandvars(r"%AppData%\Mozilla\Firefox\Profiles"),
     ]
     
@@ -189,7 +191,7 @@ class FileSystemAccess:
     def is_safe_to_delete(file_path: str) -> bool:
         """
         检查文件是否安全删除
-        验证文件是否在安全删除列表中
+        验证文件是否在安全删除列表中或用户自定义文件夹中
         
         Args:
             file_path: 要检查的文件路径
@@ -207,6 +209,11 @@ class FileSystemAccess:
                 FileSystemAccess.BROWSER_CACHE_PATHS +
                 FileSystemAccess.RECYCLE_BIN_PATHS
             )
+            
+            # 添加用户自定义文件夹到安全路径
+            from .config_manager import config_manager
+            custom_folders = config_manager.get_custom_folders()
+            all_safe_paths = list(all_safe_paths) + custom_folders
             
             # 检查文件是否在安全删除路径下
             for safe_path in all_safe_paths:

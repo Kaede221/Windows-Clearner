@@ -357,10 +357,12 @@ class CustomFoldersScanner(CategoryScanner):
         Returns:
             自定义文件夹中的文件列表
         """
-        logger.info("开始扫描自定义文件夹")
+        logger.info(f"开始扫描自定义文件夹，共 {len(self.custom_folders)} 个文件夹")
         files = []
         
         for folder in self.custom_folders:
+            logger.info(f"正在扫描自定义文件夹: {folder}")
+            
             # 检查文件夹是否存在
             if not os.path.exists(folder):
                 logger.warning(f"自定义文件夹不存在，跳过: {folder}")
@@ -373,8 +375,9 @@ class CustomFoldersScanner(CategoryScanner):
             
             logger.debug(f"扫描自定义文件夹: {folder}")
             dir_files = self._scan_directory(folder, JunkCategory.CUSTOM)
+            logger.info(f"自定义文件夹 {folder} 扫描完成，发现 {len(dir_files)} 个文件")
             files.extend(dir_files)
         
-        logger.info(f"自定义文件夹扫描完成，发现 {len(files)} 个文件")
+        logger.info(f"自定义文件夹扫描完成，总共发现 {len(files)} 个文件")
         return files
 

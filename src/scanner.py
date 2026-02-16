@@ -34,7 +34,6 @@ class JunkScanner:
         """
         self.config = config
         self.has_admin = FileSystemAccess.has_admin_privileges()
-        self.category_scanners = self._init_category_scanners()
         
         logger.info(f"初始化扫描器，管理员权限: {self.has_admin}")
     
@@ -47,6 +46,7 @@ class JunkScanner:
         """
         # 获取用户自定义的文件夹列表
         custom_folders = config_manager.get_custom_folders()
+        logger.info(f"初始化扫描器，自定义文件夹: {custom_folders}")
         
         scanners = {
             JunkCategory.TEMP_FILES: TempFilesScanner(),
@@ -58,7 +58,10 @@ class JunkScanner:
         
         # 如果有自定义文件夹，添加自定义扫描器
         if custom_folders:
+            logger.info(f"添加自定义文件夹扫描器，文件夹数量: {len(custom_folders)}")
             scanners[JunkCategory.CUSTOM] = CustomFoldersScanner(custom_folders)
+        else:
+            logger.info("没有自定义文件夹，跳过自定义扫描器")
         
         return scanners
     
@@ -74,6 +77,9 @@ class JunkScanner:
         """
         logger.info("开始扫描垃圾文件")
         start_time = time.time()
+        
+        # 每次扫描时重新初始化扫描器，以获取最新的自定义文件夹
+        category_scanners = self._init_category_scanners()
         
         categories: Dict[JunkCategory, List[JunkFile]] = {}
         errors: List[str] = []
@@ -91,7 +97,7 @@ class JunkScanner:
                 progress_callback(f"正在扫描: {category.value}", percentage)
                 
                 # 扫描类别
-                category_files = self.scan_category(category)
+                category_files = self.scan_category(category, category_scanners)
                 
                 # 如果类别为空且需要管理员权限，标记为无法访问
                 if not category_files and self._category_requires_admin(category) and not self.has_admin:
@@ -134,7 +140,7 @@ class JunkScanner:
         
         return result
     
-    def scan_category(self, category: JunkCategory) -> List[JunkFile]:
+    def scan_category(self, category: JunkCategory, category_scanners: Dict[JunkCategory, 'CategoryScanner']) -> List[JunkFile]:
         """
         扫描特定类别的垃圾文件
         
@@ -144,6 +150,7 @@ class JunkScanner:
         
         Args:
             category: 要扫描的类别
+            category_scanners: 类别扫描器映射字典
             
         Returns:
             该类别下的垃圾文件列表
@@ -154,7 +161,7 @@ class JunkScanner:
             return []
         
         # 获取类别扫描器
-        scanner = self.category_scanners.get(category)
+        scanner = category_scanners.get(category)
         if scanner is None:
             logger.warning(f"未找到类别 {category.value} 的扫描器")
             return []
