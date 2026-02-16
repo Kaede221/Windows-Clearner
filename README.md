@@ -100,3 +100,153 @@ build.bat
 - 🎮 游戏缓存
 - 💾 回收站
 
+
+## 📸 截图展示
+
+<div align="center">
+
+### 主界面
+*现代化的 Fluent Design 界面*
+
+### 扫描过程
+*实时显示扫描进度和发现的文件*
+
+### 清理报告
+*详细的清理统计和空间释放信息*
+
+</div>
+
+## 🛠️ 技术栈
+
+- **UI 框架**: PySide6 (Qt for Python)
+- **设计系统**: QFluentWidgets (Fluent Design)
+- **系统交互**: psutil
+- **测试框架**: pytest, hypothesis
+- **打包工具**: PyInstaller
+
+## 📁 项目结构
+
+```
+windows-cleaner/
+├── src/                    # 源代码目录
+│   ├── ui/                # UI 组件
+│   ├── scanner.py         # 文件扫描器
+│   ├── cleaner.py         # 文件清理器
+│   ├── models.py          # 数据模型
+│   └── ...
+├── config/                # 配置文件
+├── logs/                  # 日志文件
+├── main.py               # 主程序入口
+├── requirements.txt      # 依赖列表
+└── build.bat            # 打包脚本
+```
+
+
+## 🤝 贡献指南
+
+欢迎贡献代码、报告问题或提出建议！
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+### 开发环境设置
+
+```bash
+# 安装开发依赖
+pip install -r requirements.txt
+
+# 运行测试
+pytest
+
+# 运行带控制台的调试版本
+python main.py
+```
+
+## 📝 更新日志
+
+查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新历史。
+
+## ⚠️ 注意事项
+
+- 请在清理前仔细检查要删除的文件
+- 建议定期备份重要数据
+- 某些系统文件需要管理员权限才能清理
+- 清理后可能需要重启某些应用程序
+
+
+## ☕ 支持项目
+
+如果这个项目对你有帮助，欢迎请我喝杯咖啡！你的支持是我持续开发的动力 ❤️
+
+<div align="center">
+
+### Buy Me A Coffee
+
+<a href="https://www.buymeacoffee.com/yourusername" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">
+</a>
+
+### 或者通过以下方式支持
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://img.shields.io/badge/微信支付-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="WeChat Pay"><br>
+      <sub>微信扫码支持</sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/支付宝-1677FF?style=for-the-badge&logo=alipay&logoColor=white" alt="Alipay"><br>
+      <sub>支付宝扫码支持</sub>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/爱发电-946CE6?style=for-the-badge&logo=lightning&logoColor=white" alt="爱发电"><br>
+      <sub><a href="https://afdian.net/@yourusername">爱发电支持</a></sub>
+    </td>
+  </tr>
+</table>
+
+### ⭐ Star 历史
+
+如果觉得项目不错，请给个 Star 支持一下！
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/windows-cleaner&type=Date)](https://star-history.com/#yourusername/windows-cleaner&Date)
+
+</div>
+
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 🔗 相关链接
+
+- [问题反馈](https://github.com/yourusername/windows-cleaner/issues)
+- [功能建议](https://github.com/yourusername/windows-cleaner/discussions)
+- [PySide6 文档](https://doc.qt.io/qtforpython/)
+- [QFluentWidgets 文档](https://qfluentwidgets.com/)
+
+## 👨‍💻 作者
+
+**Your Name**
+
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Email: your.email@example.com
+
+## 🙏 致谢
+
+- 感谢 [PySide6](https://www.qt.io/qt-for-python) 提供强大的 UI 框架
+- 感谢 [QFluentWidgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets) 提供精美的 Fluent Design 组件
+- 感谢所有贡献者和支持者
+
+---
+
+<div align="center">
+
+**如果这个项目帮到了你，别忘了给个 ⭐ Star！**
+
+Made with ❤️ by [Your Name](https://github.com/yourusername)
+
+</div>
