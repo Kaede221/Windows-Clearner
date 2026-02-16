@@ -41,8 +41,8 @@
 
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/yourusername/windows-cleaner.git
-   cd windows-cleaner
+   git clone https://github.com/Kaede221/Windows-Clearner.git
+   cd Windows-Clearner
    ```
 
 2. **创建虚拟环境**（推荐）
@@ -167,7 +167,7 @@ python main.py
 
 ## 📝 更新日志
 
-查看 [CHANGELOG.md](CHANGELOG.md) 了解版本更新历史。
+查看 Git Commit 了解版本更新历史。
 
 ## ⚠️ 注意事项
 
@@ -183,27 +183,24 @@ python main.py
 
 <div align="center">
 
-### Buy Me A Coffee
-
-<a href="https://www.buymeacoffee.com/yourusername" target="_blank">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">
-</a>
-
-### 或者通过以下方式支持
+### 通过以下方式支持
 
 <table>
   <tr>
     <td align="center">
-      <img src="https://img.shields.io/badge/微信支付-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="WeChat Pay"><br>
-      <sub>微信扫码支持</sub>
+      <img src="docs/wechat.png" alt="WeChat Pay" width="200"><br>
+      <sub><b>微信支付</b></sub>
     </td>
     <td align="center">
-      <img src="https://img.shields.io/badge/支付宝-1677FF?style=for-the-badge&logo=alipay&logoColor=white" alt="Alipay"><br>
-      <sub>支付宝扫码支持</sub>
+      <img src="docs/alipay.jpg" alt="Alipay" width="200"><br>
+      <sub><b>支付宝</b></sub>
     </td>
     <td align="center">
       <img src="https://img.shields.io/badge/爱发电-946CE6?style=for-the-badge&logo=lightning&logoColor=white" alt="爱发电"><br>
-      <sub><a href="https://afdian.net/@yourusername">爱发电支持</a></sub>
+      <sub><a href="https://afdian.com/a/KaedeShimizu">爱发电支持</a></sub>
+    </td>
+  </tr>
+</table>
     </td>
   </tr>
 </table>
@@ -212,7 +209,7 @@ python main.py
 
 如果觉得项目不错，请给个 Star 支持一下！
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/windows-cleaner&type=Date)](https://star-history.com/#yourusername/windows-cleaner&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Kaede221/Windows-Clearner&type=Date)](https://star-history.com/#Kaede221/Windows-Clearner&Date)
 
 </div>
 
@@ -223,17 +220,17 @@ python main.py
 
 ## 🔗 相关链接
 
-- [问题反馈](https://github.com/yourusername/windows-cleaner/issues)
-- [功能建议](https://github.com/yourusername/windows-cleaner/discussions)
+- [问题反馈](https://github.com/Kaede221/Windows-Clearner/issues)
+- [功能建议](https://github.com/Kaede221/Windows-Clearner/discussions)
 - [PySide6 文档](https://doc.qt.io/qtforpython/)
 - [QFluentWidgets 文档](https://qfluentwidgets.com/)
 
 ## 👨‍💻 作者
 
-**Your Name**
+**Kaede221**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+- GitHub: [@Kaede221](https://github.com/Kaede221)
+- 仓库: [Windows-Clearner](https://github.com/Kaede221/Windows-Clearner)
 
 ## 🙏 致谢
 
@@ -247,6 +244,6 @@ python main.py
 
 **如果这个项目帮到了你，别忘了给个 ⭐ Star！**
 
-Made with ❤️ by [Your Name](https://github.com/yourusername)
+Made with ❤️ by [Kaede221](https://github.com/Kaede221)
 
 </div>
