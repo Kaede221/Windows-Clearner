@@ -1,90 +1,102 @@
-# Windows 垃圾文件清理工具
+<div align="center">
 
-一个基于 PySide6 和 PyQt-Fluent-Widgets 的 Windows 垃圾文件清理工具。
+# 🧹 Windows 垃圾文件清理工具
 
-## 功能特性
+<img src="icon.svg" alt="Logo" width="120" height="120">
 
-- 扫描多种类型的垃圾文件：
-  - 系统临时文件
-  - Windows 更新缓存
-  - 回收站
-  - 浏览器缓存（Chrome、Edge、Firefox）
-  - 缩略图缓存
-- 自动请求管理员权限
-- 多线程扫描和清理，不阻塞界面
-- 现代化的 Fluent Design 界面
-- 详细的日志记录
+**一款现代化、高效的 Windows 系统垃圾清理工具**
 
-## 安装依赖
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![PySide6](https://img.shields.io/badge/PySide6-6.6.0+-green.svg)](https://pypi.org/project/PySide6/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
+
+[功能特性](#-功能特性) • [快速开始](#-快速开始) • [使用说明](#-使用说明) • [截图展示](#-截图展示) • [支持项目](#-支持项目)
+
+</div>
+
+---
+
+## ✨ 功能特性
+
+- 🎨 **现代化界面** - 基于 Fluent Design 设计语言，美观易用
+- 🚀 **高效清理** - 快速扫描并清理系统垃圾文件
+- 🔍 **智能分类** - 自动识别并分类不同类型的垃圾文件
+- 🛡️ **安全可靠** - 管理员权限运行，确保清理效果
+- 🌙 **深色模式** - 支持亮色/深色主题切换
+- 📊 **详细报告** - 清晰展示清理前后的空间变化
+- ⚙️ **自定义配置** - 支持自定义扫描路径和清理规则
+- 🔄 **自动更新** - 内置更新检查功能
+
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Windows 10/11
+- Python 3.8 或更高版本
+- 管理员权限（用于清理系统文件）
+
+### 安装步骤
+
+1. **克隆仓库**
+   ```bash
+   git clone https://github.com/yourusername/windows-cleaner.git
+   cd windows-cleaner
+   ```
+
+2. **创建虚拟环境**（推荐）
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+3. **安装依赖**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **运行程序**
+   ```bash
+   python main.py
+   ```
+
+### 打包为可执行文件
+
+使用 PyInstaller 打包为独立的 .exe 文件：
 
 ```bash
-pip install -r requirements.txt
+build.bat
 ```
 
-## 运行程序
+打包后的文件位于 `dist` 目录中。
 
-### 方式一：双击运行（无控制台窗口）
 
-直接双击 `main.pyw` 文件即可启动程序，不会显示黑色控制台窗口。
+## 📖 使用说明
 
-### 方式二：命令行运行（查看日志）
+### 基本操作
 
-在命令行中运行可以看到实时日志输出：
+1. **启动程序** - 以管理员身份运行程序（程序会自动请求权限）
+2. **扫描垃圾** - 点击"开始扫描"按钮，等待扫描完成
+3. **查看结果** - 查看扫描到的垃圾文件分类和大小
+4. **清理文件** - 选择要清理的类别，点击"开始清理"
+5. **查看报告** - 清理完成后查看详细的清理报告
 
-```bash
-python main.py
-```
+### 高级功能
 
-## 日志文件
+- **自定义扫描路径** - 在设置中添加自定义文件夹进行扫描
+- **主题切换** - 支持亮色/深色主题，自动适应系统设置
+- **自动更新** - 程序会自动检查并提示可用更新
 
-程序运行日志保存在 `logs/app.log` 文件中，可以查看详细的运行信息。
+### 清理类别
 
-## 注意事项
+程序支持清理以下类型的垃圾文件：
 
-1. 首次运行会弹出 UAC 提示，请求管理员权限
-2. 如果拒绝管理员权限，程序会以普通权限运行，但某些系统目录无法清理
-3. 扫描大目录时可能需要一些时间，请耐心等待
-4. 清理前请仔细检查要删除的文件，避免误删重要数据
+- 🗑️ 临时文件
+- 🌐 浏览器缓存
+- 📦 系统缓存
+- 🔄 更新残留
+- 📝 日志文件
+- 🎮 游戏缓存
+- 💾 回收站
 
-## 项目结构
-
-```
-.
-├── main.py              # 主入口（用于命令行调试）
-├── main.pyw             # 主入口（双击运行，无控制台）
-├── requirements.txt     # 依赖列表
-├── config.json          # 应用配置文件
-├── config/              # UI 配置目录
-│   └── qconfig.json    # UI 主题配置（自动生成）
-├── src/
-│   ├── ui/             # 界面模块
-│   ├── scanner.py      # 扫描器
-│   ├── cleaner.py      # 清理器
-│   ├── controllers.py  # 控制器（多线程）
-│   ├── models.py       # 数据模型
-│   ├── file_system.py  # 文件系统访问
-│   ├── logger.py       # 日志配置
-│   └── ...
-├── logs/               # 日志目录
-└── tests/              # 测试文件
-```
-
-## 配置文件
-
-应用使用两个配置文件：
-
-1. **config.json** - 应用业务配置（扫描设置、语言等）
-2. **config/qconfig.json** - UI 配置（主题、主题色等，自动管理）
-
-详细说明请参考 [CONFIG_GUIDE.md](CONFIG_GUIDE.md)
-
-## 开发说明
-
-- 使用 PySide6 作为 GUI 框架
-- 使用 PyQt-Fluent-Widgets 实现 Fluent Design 风格
-- 使用 QThread 实现多线程扫描和清理
-- 遵循 MVC 架构模式
-
-## 许可证
-
-MIT License
