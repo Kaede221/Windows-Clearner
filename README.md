@@ -65,10 +65,7 @@
 
 ### 打包为可执行文件
 
-使用 PyInstaller 打包为独立的 .exe 文件：
-
-```bash
-build.bat
+使用 PyInstaller 打包为独立的 .exe 文件.
 ```
 
 打包后的文件位于 `dist` 目录中。
