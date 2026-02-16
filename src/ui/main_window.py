@@ -11,6 +11,7 @@ import logging
 from typing import Dict, List, Optional
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeWidgetItem
+from PySide6.QtGui import QColor
 from qfluentwidgets import (
     FluentWindow, 
     PrimaryPushButton, 
@@ -22,7 +23,9 @@ from qfluentwidgets import (
     StrongBodyLabel,
     InfoBar,
     InfoBarPosition,
-    FluentIcon
+    FluentIcon,
+    setThemeColor,
+    qconfig
 )
 
 from ..models import ScanResult, CleanResult, JunkFile, JunkCategory, ScanConfig

@@ -64,6 +64,5 @@ class ScanConfig:
 class AppConfig:
     """应用配置数据类"""
     scan_config: ScanConfig
-    ui_theme: str = "light"
     language: str = "zh_CN"
     auto_check_updates: bool = True

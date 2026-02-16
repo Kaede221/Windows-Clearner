@@ -95,7 +95,6 @@ class ConfigManager:
         
         return AppConfig(
             scan_config=scan_config,
-            ui_theme="light",
             language="zh_CN",
             auto_check_updates=True
         )
@@ -117,7 +116,6 @@ class ConfigManager:
                 "custom_patterns": config.scan_config.custom_patterns,
                 "max_file_age_days": config.scan_config.max_file_age_days
             },
-            "ui_theme": config.ui_theme,
             "language": config.language,
             "auto_check_updates": config.auto_check_updates
         }
@@ -157,7 +155,6 @@ class ConfigManager:
         
         return AppConfig(
             scan_config=scan_config,
-            ui_theme=config_dict.get("ui_theme", "light"),
             language=config_dict.get("language", "zh_CN"),
             auto_check_updates=config_dict.get("auto_check_updates", True)
         )

@@ -53,6 +53,9 @@ python main.py
 ├── main.py              # 主入口（用于命令行调试）
 ├── main.pyw             # 主入口（双击运行，无控制台）
 ├── requirements.txt     # 依赖列表
+├── config.json          # 应用配置文件
+├── config/              # UI 配置目录
+│   └── qconfig.json    # UI 主题配置（自动生成）
 ├── src/
 │   ├── ui/             # 界面模块
 │   ├── scanner.py      # 扫描器
@@ -65,6 +68,15 @@ python main.py
 ├── logs/               # 日志目录
 └── tests/              # 测试文件
 ```
+
+## 配置文件
+
+应用使用两个配置文件：
+
+1. **config.json** - 应用业务配置（扫描设置、语言等）
+2. **config/qconfig.json** - UI 配置（主题、主题色等，自动管理）
+
+详细说明请参考 [CONFIG_GUIDE.md](CONFIG_GUIDE.md)
 
 ## 开发说明
 

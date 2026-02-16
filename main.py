@@ -84,6 +84,27 @@ def main():
     app.setApplicationName("Windows 垃圾文件清理工具")
     app.setOrganizationName("WindowsCleaner")
     
+    # 初始化 qconfig - 必须在创建 QApplication 之后
+    from qfluentwidgets import qconfig, setThemeColor
+    import os
+    
+    # 确保配置目录存在
+    config_dir = "config"
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
+    
+    # 加载 qconfig 配置文件
+    qconfig.load("config/qconfig.json")
+    
+    # 设置默认主题色（如果配置文件中没有）
+    try:
+        setThemeColor("#2d7eff")
+        logger.info("已设置默认主题色: #2d7eff")
+    except Exception as e:
+        logger.warning(f"设置主题色失败: {e}")
+    
+    logger.info("qconfig 配置已加载")
+    
     # 延迟导入 MainWindow（必须在创建 QApplication 之后）
     from src.ui import MainWindow
     
