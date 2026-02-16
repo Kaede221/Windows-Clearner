@@ -43,8 +43,9 @@ class ScanWorker(QObject):
             result = self.scanner.scan(progress_callback)
             
             if not self._is_cancelled:
+                logger.info("扫描完成，准备发送结果信号")
                 self.finished.emit(result)
-                logger.info("扫描工作线程完成")
+                logger.info("扫描结果信号已发送")
             
         except InterruptedError as e:
             logger.info(f"扫描被取消: {e}")

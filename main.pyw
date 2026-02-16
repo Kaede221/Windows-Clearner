@@ -1,8 +1,7 @@
 """
-Windows 垃圾文件清理工具 - 主入口（带控制台版本）
+Windows 垃圾文件清理工具 - 主入口（无控制台窗口版本）
 
-应用程序的启动入口，用于调试时查看日志。
-正常使用请运行 main.pyw 以避免显示控制台窗口。
+应用程序的启动入口，使用 .pyw 扩展名避免显示控制台窗口。
 """
 
 import sys
@@ -29,25 +28,10 @@ def request_admin():
         # 获取当前脚本路径
         script_path = os.path.abspath(sys.argv[0])
         
-        # 判断是否在控制台中运行
-        # 如果父进程是 cmd.exe 或 powershell.exe，说明是在控制台中运行
-        import psutil
-        try:
-            parent = psutil.Process(os.getppid())
-            parent_name = parent.name().lower()
-            in_console = parent_name in ['cmd.exe', 'powershell.exe', 'windowsterminal.exe', 'conhost.exe']
-        except:
-            in_console = False
-        
-        # 根据是否在控制台中运行，选择不同的可执行文件
-        if in_console:
-            # 在控制台中运行，使用 python.exe
-            executable = sys.executable
-        else:
-            # 不在控制台中运行，使用 pythonw.exe（无窗口）
-            executable = sys.executable.replace('python.exe', 'pythonw.exe')
-            if not os.path.exists(executable):
-                executable = sys.executable
+        # .pyw 文件始终使用 pythonw.exe（无窗口）
+        executable = sys.executable
+        if 'python.exe' in executable.lower():
+            executable = executable.replace('python.exe', 'pythonw.exe')
         
         # 使用 ShellExecuteW 以管理员身份运行
         ret = ctypes.windll.shell32.ShellExecuteW(
@@ -66,7 +50,9 @@ def request_admin():
             # 用户拒绝或失败，继续以普通权限运行
             return False
     except Exception as e:
-        print(f"请求管理员权限失败: {e}")
+        # .pyw 文件中不能用 print，写入日志
+        import logging
+        logging.error(f"请求管理员权限失败: {e}")
         return False
 
 

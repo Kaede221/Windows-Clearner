@@ -28,18 +28,20 @@ class CategoryScanner(ABC):
         """
         pass
     
-    def _scan_directory(self, directory: str, category: JunkCategory) -> List[JunkFile]:
+    def _scan_directory(self, directory: str, category: JunkCategory, max_files: int = 10000) -> List[JunkFile]:
         """
         扫描目录并返回文件列表
         
         Args:
             directory: 要扫描的目录路径
             category: 文件类别
+            max_files: 最大扫描文件数，避免扫描时间过长
             
         Returns:
             垃圾文件列表
         """
         files = []
+        file_count = 0
         
         # 检查目录是否可访问
         if not FileSystemAccess.can_access_path(directory):
@@ -49,7 +51,18 @@ class CategoryScanner(ABC):
         try:
             # 遍历目录
             for root, dirs, filenames in os.walk(directory):
+                # 限制扫描深度，避免过深的目录结构
+                depth = root[len(directory):].count(os.sep)
+                if depth > 10:
+                    dirs[:] = []  # 不再深入子目录
+                    continue
+                
                 for filename in filenames:
+                    # 检查是否超过最大文件数
+                    if file_count >= max_files:
+                        logger.warning(f"目录 {directory} 文件数超过 {max_files}，停止扫描")
+                        return files
+                    
                     try:
                         file_path = os.path.join(root, filename)
                         
@@ -68,6 +81,7 @@ class CategoryScanner(ABC):
                         )
                         
                         files.append(junk_file)
+                        file_count += 1
                         
                     except PermissionError:
                         logger.debug(f"权限不足，跳过文件: {file_path}")

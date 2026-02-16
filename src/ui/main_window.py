@@ -320,7 +320,7 @@ class MainWindow(FluentWindow):
     
     def _on_scan_completed(self, result: ScanResult) -> None:
         """处理扫描完成"""
-        logger.info("扫描完成")
+        logger.info(f"收到扫描完成信号，共 {result.total_count} 个文件")
         self.scan_result = result
         
         # 更新 UI
@@ -330,8 +330,10 @@ class MainWindow(FluentWindow):
         self.progress_ring.hide()
         self.status_label.setText(f"扫描完成，发现 {result.total_count} 个文件")
         
+        logger.info("开始更新扫描结果显示")
         # 更新扫描结果显示
         self.update_scan_result(result)
+        logger.info("扫描结果显示更新完成")
         
         # 显示权限警告
         if result.requires_admin:
@@ -347,6 +349,7 @@ class MainWindow(FluentWindow):
             duration=3000,
             parent=self
         )
+        logger.info("扫描完成处理结束")
     
     def _on_scan_error(self, error_message: str) -> None:
         """处理扫描错误"""
@@ -442,36 +445,60 @@ class MainWindow(FluentWindow):
     
     def update_scan_result(self, result: ScanResult) -> None:
         """更新扫描结果显示"""
+        logger.info(f"开始更新扫描结果，共 {result.total_count} 个文件")
+        
         # 更新统计卡片
         self._update_stats_cards(result.total_count, result.total_size, result.total_size)
         
         # 清空树形列表
         self.tree_widget.clear()
         
-        # 添加类别和文件
-        for category, files in result.categories.items():
-            if not files:
-                continue
-            
-            # 创建类别节点
-            category_item = QTreeWidgetItem(self.tree_widget)
-            category_item.setText(0, category.value)
-            category_item.setText(1, self._format_size(sum(f.size for f in files)))
-            category_item.setText(2, f"{len(files)} 个文件")
-            category_item.setCheckState(0, Qt.Checked)
-            category_item.setData(0, Qt.UserRole, category)
-            
-            # 添加文件节点
-            for junk_file in files:
-                file_item = QTreeWidgetItem(category_item)
-                file_item.setText(0, os.path.basename(junk_file.path))
-                file_item.setText(1, self._format_size(junk_file.size))
-                file_item.setText(2, junk_file.path)
-                file_item.setCheckState(0, Qt.Checked)
-                file_item.setData(0, Qt.UserRole, junk_file)
+        # 暂时阻止信号，避免频繁触发
+        self.tree_widget.blockSignals(True)
         
-        # 展开所有节点
-        self.tree_widget.expandAll()
+        try:
+            # 添加类别和文件
+            for category, files in result.categories.items():
+                if not files:
+                    continue
+                
+                logger.debug(f"添加类别 {category.value}，共 {len(files)} 个文件")
+                
+                # 创建类别节点
+                category_item = QTreeWidgetItem(self.tree_widget)
+                category_item.setText(0, category.value)
+                category_item.setText(1, self._format_size(sum(f.size for f in files)))
+                category_item.setText(2, f"{len(files)} 个文件")
+                category_item.setCheckState(0, Qt.Checked)
+                category_item.setData(0, Qt.UserRole, category)
+                
+                # 限制显示的文件数量，避免界面卡顿
+                max_display_files = 1000
+                display_files = files[:max_display_files]
+                
+                # 添加文件节点
+                for junk_file in display_files:
+                    file_item = QTreeWidgetItem(category_item)
+                    file_item.setText(0, os.path.basename(junk_file.path))
+                    file_item.setText(1, self._format_size(junk_file.size))
+                    file_item.setText(2, junk_file.path)
+                    file_item.setCheckState(0, Qt.Checked)
+                    file_item.setData(0, Qt.UserRole, junk_file)
+                
+                # 如果文件数超过限制，添加提示节点
+                if len(files) > max_display_files:
+                    hint_item = QTreeWidgetItem(category_item)
+                    hint_item.setText(0, f"... 还有 {len(files) - max_display_files} 个文件未显示")
+                    hint_item.setText(1, "")
+                    hint_item.setText(2, "所有文件仍会被选中清理")
+                    hint_item.setFlags(hint_item.flags() & ~Qt.ItemIsUserCheckable)
+            
+            # 展开所有节点
+            self.tree_widget.expandAll()
+            
+        finally:
+            # 恢复信号
+            self.tree_widget.blockSignals(False)
         
         logger.info("扫描结果已更新到树形列表")
     
@@ -526,15 +553,23 @@ class MainWindow(FluentWindow):
         for i in range(self.tree_widget.topLevelItemCount()):
             category_item = self.tree_widget.topLevelItem(i)
             
-            # 遍历类别下的所有文件节点
-            for j in range(category_item.childCount()):
-                file_item = category_item.child(j)
-                
-                # 如果文件被选中，添加到列表
-                if file_item.checkState(0) == Qt.Checked:
-                    junk_file = file_item.data(0, Qt.UserRole)
-                    if isinstance(junk_file, JunkFile):
-                        selected_files.append(junk_file)
+            # 如果类别被选中，获取该类别的所有文件（包括未显示的）
+            if category_item.checkState(0) == Qt.Checked:
+                category = category_item.data(0, Qt.UserRole)
+                if isinstance(category, JunkCategory) and self.scan_result:
+                    # 从扫描结果中获取该类别的所有文件
+                    category_files = self.scan_result.categories.get(category, [])
+                    selected_files.extend(category_files)
+            else:
+                # 如果类别未完全选中，遍历子节点
+                for j in range(category_item.childCount()):
+                    file_item = category_item.child(j)
+                    
+                    # 如果文件被选中，添加到列表
+                    if file_item.checkState(0) == Qt.Checked:
+                        junk_file = file_item.data(0, Qt.UserRole)
+                        if isinstance(junk_file, JunkFile):
+                            selected_files.append(junk_file)
         
         return selected_files
     
