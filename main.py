@@ -29,32 +29,23 @@ def request_admin():
         # 获取当前脚本路径
         script_path = os.path.abspath(sys.argv[0])
         
-        # 判断是否在控制台中运行
-        # 如果父进程是 cmd.exe 或 powershell.exe，说明是在控制台中运行
-        import psutil
-        try:
-            parent = psutil.Process(os.getppid())
-            parent_name = parent.name().lower()
-            in_console = parent_name in ['cmd.exe', 'powershell.exe', 'windowsterminal.exe', 'conhost.exe']
-        except:
-            in_console = False
+        # 检查是否有 --console 参数
+        args = ' '.join(sys.argv[1:])
+        if '--console' not in args:
+            args = '--console ' + args
         
-        # 根据是否在控制台中运行，选择不同的可执行文件
-        if in_console:
-            # 在控制台中运行，使用 python.exe
-            executable = sys.executable
-        else:
-            # 不在控制台中运行，使用 pythonw.exe（无窗口）
-            executable = sys.executable.replace('python.exe', 'pythonw.exe')
-            if not os.path.exists(executable):
-                executable = sys.executable
+        # 始终使用 python.exe（保持控制台）
+        executable = sys.executable
+        
+        logger = logging.getLogger(__name__)
+        logger.info(f"请求管理员权限，使用 {executable} 重启")
         
         # 使用 ShellExecuteW 以管理员身份运行
         ret = ctypes.windll.shell32.ShellExecuteW(
             None,
             "runas",
             executable,
-            f'"{script_path}"',
+            f'"{script_path}" {args}',
             None,
             1  # SW_SHOWNORMAL
         )
@@ -67,6 +58,7 @@ def request_admin():
             return False
     except Exception as e:
         print(f"请求管理员权限失败: {e}")
+        logging.error(f"请求管理员权限失败: {e}")
         return False
 
 
@@ -98,6 +90,8 @@ def main():
     # 创建并显示主窗口
     window = MainWindow()
     window.show()
+    
+    logger.info("主窗口已显示，进入事件循环")
     
     # 运行应用程序
     exit_code = app.exec()
