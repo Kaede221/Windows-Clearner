@@ -66,6 +66,9 @@
 ### 打包为可执行文件
 
 使用 PyInstaller 打包为独立的 .exe 文件.
+
+```bash
+pyinstaller --noconsole --onefile --name="WindowsCleaner" --icon="icon.ico" --add-data="icon.svg;." --collect-all=qfluentwidgets main.py
 ```
 
 打包后的文件位于 `dist` 目录中。
