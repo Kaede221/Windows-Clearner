@@ -109,36 +109,43 @@ class MainWindow(FluentWindow):
         cards_layout.setSpacing(15)
         
         # 文件数量卡片
-        self.file_count_card = self._create_stat_card("文件数量", "0")
+        self.file_count_card, self.file_count_label = self._create_stat_card("文件数量", "0")
         cards_layout.addWidget(self.file_count_card)
         
         # 总大小卡片
-        self.total_size_card = self._create_stat_card("总大小", "0 MB")
+        self.total_size_card, self.total_size_label = self._create_stat_card("总大小", "0 MB")
         cards_layout.addWidget(self.total_size_card)
         
         # 选中大小卡片
-        self.selected_size_card = self._create_stat_card("选中大小", "0 MB")
+        self.selected_size_card, self.selected_size_label = self._create_stat_card("选中大小", "0 MB")
         cards_layout.addWidget(self.selected_size_card)
         
         parent_layout.addLayout(cards_layout)
     
-    def _create_stat_card(self, title: str, value: str) -> CardWidget:
-        """创建单个统计卡片"""
+    def _create_stat_card(self, title: str, value: str):
+        """创建单个统计卡片，返回卡片和值标签"""
         card = CardWidget()
         card.setFixedHeight(100)
         
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(15, 15, 15, 15)
+        card_layout.setSpacing(5)
         
         title_label = BodyLabel(title)
         value_label = StrongBodyLabel(value)
-        value_label.setStyleSheet("font-size: 24px;")
+        
+        # 设置值标签的字体大小
+        font = value_label.font()
+        font.setPointSize(20)
+        value_label.setFont(font)
         
         card_layout.addWidget(title_label)
         card_layout.addWidget(value_label)
         card_layout.addStretch()
         
-        return card
+        logger.info(f"创建统计卡片: {title}, 初始值: {value}")
+        
+        return card, value_label
     
     def _create_tree_widget(self, parent_layout: QVBoxLayout) -> None:
         """创建树形列表"""
@@ -543,7 +550,7 @@ class MainWindow(FluentWindow):
         selected_size = sum(f.size for f in selected_files)
         
         # 更新选中大小卡片
-        self._update_card_value(self.selected_size_card, self._format_size(selected_size))
+        self.selected_size_label.setText(self._format_size(selected_size))
     
     def _get_selected_files(self) -> List[JunkFile]:
         """获取选中的文件列表"""
@@ -575,18 +582,30 @@ class MainWindow(FluentWindow):
     
     def _update_stats_cards(self, file_count: int, total_size: int, selected_size: int) -> None:
         """更新统计卡片"""
-        self._update_card_value(self.file_count_card, str(file_count))
-        self._update_card_value(self.total_size_card, self._format_size(total_size))
-        self._update_card_value(self.selected_size_card, self._format_size(selected_size))
-    
-    def _update_card_value(self, card: CardWidget, value: str) -> None:
-        """更新卡片的值"""
-        # 获取卡片中的 StrongBodyLabel（第二个子部件）
-        layout = card.layout()
-        if layout and layout.count() >= 2:
-            value_label = layout.itemAt(1).widget()
-            if isinstance(value_label, StrongBodyLabel):
-                value_label.setText(value)
+        logger.info(f"更新统计卡片: 文件数={file_count}, 总大小={total_size}, 选中大小={selected_size}")
+        
+        # 更新标签文本
+        count_str = str(file_count)
+        formatted_total = self._format_size(total_size)
+        formatted_selected = self._format_size(selected_size)
+        
+        self.file_count_label.setText(count_str)
+        self.total_size_label.setText(formatted_total)
+        self.selected_size_label.setText(formatted_selected)
+        
+        logger.info(f"标签文本已更新: {count_str}, {formatted_total}, {formatted_selected}")
+        
+        # 强制重绘标签
+        self.file_count_label.repaint()
+        self.total_size_label.repaint()
+        self.selected_size_label.repaint()
+        
+        # 强制重绘卡片
+        self.file_count_card.repaint()
+        self.total_size_card.repaint()
+        self.selected_size_card.repaint()
+        
+        logger.info("卡片和标签已强制重绘")
     
     def _format_size(self, size_bytes: int) -> str:
         """格式化文件大小"""
