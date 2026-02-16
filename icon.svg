@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- 背景圆形 -->
+  <circle cx="128" cy="128" r="120" fill="#0078D4" opacity="0.1"/>
+  
+  <!-- 主背景 - 渐变 -->
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0078D4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005A9E;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="sparkleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- 垃圾桶主体 -->
+  <g filter="url(#shadow)">
+    <!-- 垃圾桶盖子 -->
+    <rect x="70" y="75" width="116" height="12" rx="4" fill="url(#mainGradient)"/>
+    
+    <!-- 垃圾桶顶部边缘 -->
+    <path d="M 80 87 L 80 95 L 176 95 L 176 87 Z" fill="url(#mainGradient)"/>
+    
+    <!-- 垃圾桶主体 - 梯形 -->
+    <path d="M 85 95 L 95 175 Q 128 180 161 175 L 171 95 Z" fill="url(#mainGradient)"/>
+    
+    <!-- 垃圾桶高光 -->
+    <path d="M 90 100 L 98 170 Q 128 174 158 170 L 166 100 Z" fill="white" opacity="0.15"/>
+    
+    <!-- 垃圾桶把手 -->
+    <rect x="105" y="65" width="46" height="10" rx="5" fill="url(#mainGradient)"/>
+  </g>
+  
+  <!-- Windows 窗口元素 -->
+  <g opacity="0.9">
+    <rect x="95" y="110" width="30" height="30" rx="2" fill="white" opacity="0.3"/>
+    <rect x="131" y="110" width="30" height="30" rx="2" fill="white" opacity="0.3"/>
+  </g>
+  
+  <!-- 清理扫帚/刷子 -->
+  <g transform="translate(165, 60) rotate(-25)">
+    <!-- 刷子柄 -->
+    <rect x="0" y="0" width="8" height="45" rx="4" fill="#8B4513"/>
+    <rect x="1" y="1" width="3" height="43" rx="2" fill="#A0522D" opacity="0.6"/>
+    
+    <!-- 刷子头 -->
+    <ellipse cx="4" cy="48" rx="10" ry="8" fill="#D2691E"/>
+    <path d="M -6 48 Q 4 54 14 48" stroke="#8B4513" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- 闪光效果 - 表示清理/清洁 -->
+  <g fill="url(#sparkleGradient)">
+    <!-- 大星星 -->
+    <path d="M 190 140 L 195 145 L 200 140 L 195 135 Z" opacity="0.9"/>
+    <path d="M 195 135 L 200 140 L 195 145 L 190 140 Z" opacity="0.9"/>
+    
+    <!-- 小星星 -->
+    <circle cx="180" cy="120" r="3" opacity="0.8"/>
+    <circle cx="205" cy="155" r="2.5" opacity="0.7"/>
+    <circle cx="175" cy="165" r="2" opacity="0.6"/>
+    
+    <!-- 闪光线条 -->
+    <line x1="188" y1="138" x2="183" y2="133" stroke="url(#sparkleGradient)" stroke-width="2" opacity="0.7"/>
+    <line x1="202" y1="142" x2="207" y2="147" stroke="url(#sparkleGradient)" stroke-width="2" opacity="0.7"/>
+  </g>
+  
+  <!-- 删除符号 X -->
+  <g transform="translate(128, 135)" opacity="0.8">
+    <line x1="-8" y1="-8" x2="8" y2="8" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <line x1="8" y1="-8" x2="-8" y2="8" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

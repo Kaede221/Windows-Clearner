@@ -84,9 +84,17 @@ def main():
     app.setApplicationName("Windows 垃圾文件清理工具")
     app.setOrganizationName("WindowsCleaner")
     
+    # 设置应用程序图标
+    from PySide6.QtGui import QIcon
+    icon_path = os.path.join(os.path.dirname(__file__), "icon.svg")
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+        logger.info(f"已设置应用程序图标: {icon_path}")
+    else:
+        logger.warning(f"图标文件不存在: {icon_path}")
+    
     # 初始化 qconfig - 必须在创建 QApplication 之后
     from qfluentwidgets import qconfig, setThemeColor
-    import os
     
     # 确保配置目录存在
     config_dir = "config"

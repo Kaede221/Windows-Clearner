@@ -11,7 +11,7 @@ import logging
 from typing import Dict, List, Optional
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTreeWidgetItem
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QIcon
 from qfluentwidgets import (
     FluentWindow, 
     PrimaryPushButton, 
@@ -77,6 +77,14 @@ class MainWindow(FluentWindow):
         # 设置窗口属性
         self.setWindowTitle("Windows 垃圾文件清理工具")
         self.resize(900, 700)
+        
+        # 设置窗口图标
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "icon.svg")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
+            logger.info(f"已设置窗口图标: {icon_path}")
+        else:
+            logger.warning(f"图标文件不存在: {icon_path}")
         
         # 创建中心部件
         central_widget = QWidget()
